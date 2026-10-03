@@ -352,7 +352,13 @@ function allNotes(){const o={};try{for(let i=0;i<localStorage.length;i++){const 
 function exportNotes(){const o=allNotes();const keys=Object.keys(o);if(!keys.length){alert('No notes yet.');return}
   let txt='CSO 2522 Interview Guide: my notes\n\n';NAV.forEach(t=>t.subs.forEach(s=>{const v=o[t.id+'/'+s.id];if(v)txt+='## '+t.abbr+' '+s.n+' · '+t.label+' › '+s.label+'\n'+v+'\n\n'}));
   txt+='<!-- notes-data '+JSON.stringify(o)+' -->\n';
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain'}));a.download='interview-guide-notes.txt';document.body.appendChild(a);a.click();a.remove()}
+  saveFile('interview-guide-notes.txt',txt)}
+async function saveFile(name,txt){
+  if(window.claude&&window.claude.use){let dl=null;try{dl=await window.claude.use('downloads')}catch(e){}
+    if(!dl){alert('Saving files is not available in this view.');return}
+    try{await dl.save({filename:name,data:txt})}catch(e){const c=e&&e.code;
+      if(c==='rate_limited')alert('A save prompt is already open.');else if(c!=='declined')alert('The notes file could not be saved here.')}return}
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain'}));a.download=name;document.body.appendChild(a);a.click();a.remove()}
 function importNotes(){const f=document.createElement('input');f.type='file';f.accept='.txt,text/plain';f.onchange=()=>{const r=new FileReader();r.onload=()=>{
   const m=/<!-- notes-data (.*) -->/.exec(r.result);if(!m){alert('That file is not a notes export from this guide.');return}
   let o;try{o=JSON.parse(m[1])}catch(e){alert('That notes file could not be read.');return}
