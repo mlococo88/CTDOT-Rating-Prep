@@ -134,14 +134,14 @@ body.playing{padding-bottom:170px}
 .pl-row button:focus-visible,.pl-row select:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
 @media (max-width:640px){.pl-row{gap:8px}.pl-row button{min-width:56px;height:56px}.pl-row button.main{flex:1}.pl-row select{max-width:none;flex:1 1 30%}body.playing{padding-bottom:210px}}
 nav.tabs,nav.subs{display:none!important}
-.top-inner{max-width:1440px}
+.top-inner{max-width:1760px}
 .top-inner{padding-bottom:12px}
 .menubtn{background:none;border:1.5px solid var(--sign-ink);color:var(--sign-ink);border-radius:6px;font:600 18px/1 var(--display);padding:6px 9px;cursor:pointer}
 .menubtn:focus-visible,.themebtn:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
-.layout{display:grid;grid-template-columns:330px minmax(0,1fr);max-width:1440px;margin:0 auto}
+.layout{display:grid;grid-template-columns:330px minmax(0,1fr);max-width:1760px;margin:0 auto}
 body.tree-hidden .layout{grid-template-columns:minmax(0,1fr)}
 body.tree-hidden aside#tree{display:none}
-.layout main{max-width:1100px;margin:0;width:100%}
+.layout main{max-width:1400px;margin:0;width:100%}
 aside#tree{position:sticky;top:var(--hdr,64px);height:calc(100vh - var(--hdr,64px));overflow:auto;border-right:1px solid var(--rule);padding:12px 10px 60px 12px;background:var(--paper);overscroll-behavior:contain}
 body.playing aside#tree{padding-bottom:200px}
 .tree-tools{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;padding:0 4px 10px;border-bottom:1px solid var(--rule);margin-bottom:8px}
@@ -186,11 +186,11 @@ details.unit{container-type:inline-size}
 .inote{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--amber);border-radius:4px;padding:10px 12px;margin:4px 14px 16px}
 .inote label{display:flex;justify-content:space-between;gap:8px;font:600 15px var(--display);margin-bottom:6px}
 .inote label .for{font-weight:500;color:var(--muted);font-size:13px}
-.inote textarea{width:100%;min-height:96px;resize:vertical;font:15px/1.5 var(--body);color:var(--ink);background:var(--surface);border:1.5px solid var(--rule);border-radius:4px;padding:8px 10px;overflow:hidden}
+.inote textarea{width:100%;min-height:180px;resize:vertical;font:15px/1.5 var(--body);color:var(--ink);background:var(--surface);border:1.5px solid var(--rule);border-radius:4px;padding:8px 10px;overflow:hidden}
 .inote textarea:focus{outline:3px solid var(--amber);outline-offset:1px;border-color:var(--amber)}
 .inote .saved{font:500 12px var(--display);color:var(--muted);min-height:1.2em;margin-top:4px}
-@container (min-width:820px){
-  .bodywrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,300px);gap:8px;align-items:start}
+@container (min-width:860px){
+  .bodywrap{display:grid;grid-template-columns:minmax(0,72ch) minmax(340px,1fr);gap:8px;align-items:start}
   .bodywrap .inote{position:sticky;top:calc(var(--hdr,64px) + 12px);margin:14px 16px 16px 0}
 }
 .note-tools{display:flex;justify-content:flex-end;gap:14px;margin:4px 0 0;font:600 13px var(--display)}
@@ -364,9 +364,9 @@ function notesEl(t,s){
     st.textContent=ok?'Saved on this device':'Could not save: this browser is blocking storage';refreshMarks()},400)});return w}
 function itemNotes(u){
   const k='cso-note-u:'+u.id;const w=document.createElement('aside');w.className='inote';
-  w.innerHTML='<label>My notes<span class="for">'+esc(u.num||'')+'</span></label><textarea rows="4" placeholder="Your notes for this item…"></textarea><div class="saved" aria-live="polite"></div>';
+  w.innerHTML='<label>My notes<span class="for">'+esc(u.num||'')+'</span></label><textarea rows="7" placeholder="Your notes for this item…"></textarea><div class="saved" aria-live="polite"></div>';
   const ta=w.querySelector('textarea'),st=w.querySelector('.saved');ta.setAttribute('aria-label','My notes for '+(u.num||'')+' '+u.title);ta.value=load(k)||'';
-  const fit=()=>{ta.style.height='auto';ta.style.height=Math.max(96,ta.scrollHeight+3)+'px'};requestAnimationFrame(fit);
+  const fit=()=>{ta.style.height='auto';ta.style.height=Math.max(180,ta.scrollHeight+3)+'px'};requestAnimationFrame(fit);
   let tm;ta.addEventListener('input',()=>{fit();st.textContent='Saving…';clearTimeout(tm);tm=setTimeout(()=>{
     let ok=true;try{ta.value?localStorage.setItem(k,ta.value):localStorage.removeItem(k)}catch(e){ok=false}
     st.textContent=ok?'Saved on this device':'Could not save: this browser is blocking storage';refreshMarks()},400)});
