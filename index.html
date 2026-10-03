@@ -133,9 +133,59 @@ body.playing{padding-bottom:170px}
 .pl-row .x{margin-left:auto}
 .pl-row button:focus-visible,.pl-row select:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
 @media (max-width:640px){.pl-row{gap:8px}.pl-row button{min-width:56px;height:56px}.pl-row button.main{flex:1}.pl-row select{max-width:none;flex:1 1 30%}body.playing{padding-bottom:210px}}
+nav.tabs,nav.subs{display:none!important}
+.top-inner{max-width:1440px}
+.top-inner{padding-bottom:12px}
+.menubtn{background:none;border:1.5px solid var(--sign-ink);color:var(--sign-ink);border-radius:6px;font:600 18px/1 var(--display);padding:6px 9px;cursor:pointer}
+.menubtn:focus-visible,.themebtn:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.layout{display:grid;grid-template-columns:330px minmax(0,1fr);max-width:1440px;margin:0 auto}
+body.tree-hidden .layout{grid-template-columns:minmax(0,1fr)}
+body.tree-hidden aside#tree{display:none}
+.layout main{max-width:1100px;margin:0;width:100%}
+aside#tree{position:sticky;top:var(--hdr,64px);height:calc(100vh - var(--hdr,64px));overflow:auto;border-right:1px solid var(--rule);padding:12px 10px 60px 12px;background:var(--paper);overscroll-behavior:contain}
+body.playing aside#tree{padding-bottom:200px}
+.tree-tools{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;padding:0 4px 10px;border-bottom:1px solid var(--rule);margin-bottom:8px}
+.tree-h{font:700 16px var(--display);margin-right:auto}
+.tree-tools button{font:600 13px var(--display);background:none;border:0;color:var(--link);padding:2px 0;cursor:pointer;text-decoration:underline}
+ul.tree,ul.tree ul{list-style:none;margin:0;padding:0}
+ul.tree ul{margin-left:14px;border-left:1px solid var(--rule);padding-left:4px}
+ul.tree li.shut>ul{display:none}
+.tree .row{display:flex;align-items:flex-start;gap:2px;border-radius:4px}
+.tree .tw{flex:0 0 22px;height:24px;background:none;border:0;color:var(--muted);cursor:pointer;padding:0;font-size:12px;line-height:24px}
+.tree .tw::before{content:"▾"}
+.tree li.shut>.row>.tw::before{content:"▸"}
+.tree a{display:block;flex:1;color:var(--ink);text-decoration:none;padding:3px 6px;border-radius:4px;font-family:var(--display);line-height:1.25}
+.tree a:hover{background:var(--surface)}
+.tree a:focus-visible,.tree .tw:focus-visible{outline:3px solid var(--amber);outline-offset:-2px}
+.tree li.l1>.row>a{font-weight:700;font-size:16px;padding-top:5px;padding-bottom:5px}
+.tree li.l2>.row>a{font-weight:600;font-size:15px}
+.tree li.leaf>a{font-size:14px;font-weight:500;margin-left:22px;color:var(--ink)}
+.tree li.leaf.xl>a{color:var(--muted);font-style:italic}
+.tree .n{color:var(--muted);font-weight:600;margin-right:5px;font-style:normal;white-space:nowrap}
+.tree .ct{color:var(--muted);font-weight:500;font-size:12px;margin-left:5px}
+.tree .nm{color:var(--amber);margin-left:5px;font-size:12px}
+.tree .active>a,.tree li.leaf.active>a{background:var(--surface);box-shadow:inset 3px 0 0 var(--sign)}
+.tree li.l2.cur>.row>a{background:var(--surface);box-shadow:inset 3px 0 0 var(--sign)}
+.pager{display:flex;justify-content:space-between;gap:12px;margin:30px 0 0;padding-top:14px;border-top:1px solid var(--rule);font:600 15px var(--display)}
+.pager a{color:var(--link);max-width:48%}
+.pager a.nx{text-align:right;margin-left:auto}
+.scrim{display:none}
+.tree-tools .tclose{display:none;font-size:18px;text-decoration:none;color:var(--ink);padding:0 4px}
+@media (max-width:900px){
+  .layout{display:block}
+  aside#tree,body.tree-hidden aside#tree{display:block;position:fixed;top:0;left:0;bottom:0;height:auto;width:min(88vw,380px);z-index:40;transform:translateX(-104%);transition:transform .2s;box-shadow:4px 0 24px rgba(0,0,0,.3);padding-top:calc(12px + env(safe-area-inset-top,0px))}
+  body.tree-open aside#tree{transform:none}
+  .tree-tools{position:sticky;top:calc(-12px - env(safe-area-inset-top,0px));background:var(--paper);z-index:1;padding-top:6px}
+  .tree-tools .tclose{display:inline-block}
+  body.tree-open .scrim{display:block;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:35}
+  .tree a{padding:6px 6px}.tree .tw{height:32px;line-height:32px;flex-basis:28px}
+}
+@media (prefers-reduced-motion:reduce){aside#tree{transition:none}}
+@media print{aside#tree,.menubtn,.pager{display:none}.layout{display:block}}
 footer{max-width:1100px;margin:0 auto;padding:0 20px 40px;color:var(--muted);font:500 14px var(--display)}
 .themebtn{background:none;border:1.5px solid var(--sign-ink);color:var(--sign-ink);border-radius:6px;font:600 16px/1 var(--display);padding:6px 9px;cursor:pointer}
 @media (max-width:640px){
+  .menubtn{padding:4px 7px;font-size:15px}
   .subs-inner{padding:8px 14px}
   nav.subs button{font-size:14px;padding:5px 11px}
   body{font-size:16px}
@@ -161,6 +211,7 @@ footer{max-width:1100px;margin:0 auto;padding:0 20px 40px;color:var(--muted);fon
 <header class="top">
   <div class="top-inner">
     <div class="brand">
+      <button class="menubtn" id="menu" aria-label="Show or hide contents" aria-controls="tree" title="Contents">☰</button>
       <span class="shield">CSO 2522</span>
       <h1>CTDOT Interview Guide</h1>
       <div class="search"><input id="q" type="search" placeholder="Search everything" aria-label="Search the whole guide" autocomplete="off"><button id="qclear" aria-label="Clear search">×</button></div>
@@ -170,7 +221,14 @@ footer{max-width:1100px;margin:0 auto;padding:0 20px 40px;color:var(--muted);fon
   </div>
 </header>
 <nav class="subs" id="subsbar" aria-label="Subtopics"><div class="subs-inner" id="subs" role="tablist"></div></nav>
+<div class="layout">
+<aside id="tree" aria-label="Contents">
+  <div class="tree-tools"><span class="tree-h">Contents</span><button data-x="all">Expand all</button><button data-x="subs">Subtopics only</button><button data-x="none">Collapse all</button><button class="tclose" id="tclose" aria-label="Close contents">✕</button></div>
+  <div id="treebody"></div>
+</aside>
+<div class="scrim" id="scrim"></div>
 <main id="main"></main>
+</div>
 <div id="player" role="region" aria-label="Read aloud player"><div class="pl-inner">
   <div class="pl-now" id="plnow"></div>
   <div class="pl-row">
@@ -219,16 +277,14 @@ function unitEl(u,opts){
     const others=(where[u.id]||[]).filter(([a,b])=>!(a===cur.t&&b===cur.s));if(opts.home){const p=document.createElement('div');p.className='also';p.innerHTML='Home section: <a href="#'+u.home[0]+'/'+u.home[1]+'/'+u.id+'">'+esc(u.num+' · '+label(u.home[0],u.home[1]))+'</a>';d.appendChild(p)}
     if(others.length&&!opts.loc){const p=document.createElement('div');p.className='also';p.innerHTML='Also under: '+others.map(([a,b])=>'<a href="#'+a+'/'+b+'">'+esc(label(a,b))+'</a>').join(', ');d.appendChild(p)}
     if(opts.hl)highlight(b,opts.hl)};
-  d.addEventListener('toggle',()=>{if(d.open)fill()});d._fill=fill;return d}
+  d.addEventListener('toggle',()=>{if(d.open){fill();if(!opts.loc)treeLeaf(u.id)}});d._fill=fill;return d}
 function go(tid,sid,uid){
   const t=T[tid]||NAV[0];const s=t.subs.find(x=>x.id===sid)||t.subs[0];cur={t:t.id,s:s.id};
   store('cso-tab',t.id);store('cso-sub-'+t.id,s.id);history.replaceState(null,'','#'+t.id+'/'+s.id+(uid&&U[uid]?'/'+uid:''));
   [...tabsEl.children].forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===t.id?'true':'false'));
-  tabsEl.querySelector('[data-tab="'+t.id+'"]').scrollIntoView({block:'nearest',inline:'nearest'});
   document.getElementById('subsbar').style.display='';
   subsEl.innerHTML='';t.subs.forEach(x=>{const b=document.createElement('button');b.setAttribute('role','tab');b.dataset.sub=x.id;b.setAttribute('aria-selected',x.id===s.id?'true':'false');
     b.innerHTML='<span class="subnum">'+x.n+'</span>'+esc(x.label)+'<span class="count">'+x.units.length+'</span>';b.addEventListener('click',()=>go(t.id,x.id));subsEl.appendChild(b)});
-  subsEl.querySelector('[aria-selected="true"]').scrollIntoView({block:'nearest',inline:'nearest'});
   main.innerHTML='';
   const head=document.createElement('div');head.className='panel-head';
   head.innerHTML='<div><p class="crumb">'+t.abbr+' · '+esc(t.label)+'</p><h2>'+s.n+' · '+esc(s.label)+'</h2><p>'+esc(t.blurb)+'</p></div><div class="tools">'+(TTS?'<button id="listen" class="listen">▶ Listen</button>':'')+'<button id="xall">Expand all</button></div>';
@@ -244,7 +300,41 @@ function go(tid,sid,uid){
   group('Covered in other sections',elsewhere,u=>({home:1}));
   if(list.length===1){const d=main.querySelector('details.unit');d._fill();d.open=true}
   let open=false;document.getElementById('xall').onclick=e=>{open=!open;main.querySelectorAll('details.unit').forEach(d=>{if(open)d._fill();d.open=open});e.target.textContent=open?'Collapse all':'Expand all'};
-  window.scrollTo(0,0);if(uid)focusUnit(uid)}
+  const seq=[];NAV.forEach(a=>a.subs.forEach(b=>seq.push([a,b])));const k=seq.findIndex(([a,b])=>a.id===t.id&&b.id===s.id);
+  const pl=([a,b],c)=>'<a class="'+c+'" href="#'+a.id+'/'+b.id+'">'+(c==='nx'?'Next: ':'‹ ')+esc(a.abbr+' '+b.n+' · '+b.label)+(c==='nx'?' ›':'')+'</a>';
+  main.insertAdjacentHTML('beforeend','<nav class="pager" aria-label="Sections">'+(k>0?pl(seq[k-1],'pv'):'')+(k<seq.length-1?pl(seq[k+1],'nx'):'')+'</nav>');
+  window.scrollTo(0,0);treeSync(t.id,s.id,uid);if(uid)focusUnit(uid)}
+const treeEl=document.getElementById('treebody');let shut=new Set();try{shut=new Set(JSON.parse(load('cso-tree')||'[]'))}catch(e){}
+function buildTree(){const notes=allNotes();let h='';
+  const br=(id,l,a,kids)=>'<li class="br l'+l+(shut.has(id)?' shut':'')+'" data-node="'+id+'"><div class="row"><button class="tw" aria-expanded="'+!shut.has(id)+'" aria-label="Expand or collapse"></button>'+a+'</div><ul>'+kids+'</ul></li>';
+  NAV.forEach(t=>{h+=br('t:'+t.id,1,'<a href="#'+t.id+'/'+t.subs[0].id+'">'+t.abbr+' · '+esc(t.label)+'</a>',t.subs.map(s=>br('s:'+t.id+'/'+s.id,2,
+    '<a href="#'+t.id+'/'+s.id+'"><span class="n">'+s.n+'</span>'+esc(s.label)+'<span class="ct">'+s.units.length+'</span>'+(notes[t.id+'/'+s.id]?'<span class="nm" title="Has notes">✎</span>':'')+'</a>',
+    s.units.map(id=>{const u=U[id];const home=u.home[0]===t.id&&u.home[1]===s.id;
+      return '<li class="leaf'+(home?'':' xl')+'" data-u="'+id+'"><a href="#'+t.id+'/'+s.id+'/'+id+'"'+(home?'':' title="Lives in '+esc(label(u.home[0],u.home[1]))+'"')+'><span class="n">'+(home?'':'↗ ')+u.num+'</span>'+esc(u.title)+'</a></li>'}).join(''))).join(''))});
+  treeEl.innerHTML='<ul class="tree">'+h+'</ul>'}
+function saveTree(){store('cso-tree',JSON.stringify([...shut]))}
+function setShut(li,on){li.classList.toggle('shut',on);li.querySelector(':scope>.row>.tw').setAttribute('aria-expanded',!on);on?shut.add(li.dataset.node):shut.delete(li.dataset.node)}
+treeEl.addEventListener('click',e=>{const tw=e.target.closest('.tw');if(tw){const li=tw.closest('li');setShut(li,!li.classList.contains('shut'));saveTree();return}
+  const a=e.target.closest('a');if(!a||e.metaKey||e.ctrlKey||e.shiftKey)return;e.preventDefault();
+  const [x,y,z]=a.getAttribute('href').slice(1).split('/');history.pushState(null,'',a.getAttribute('href'));
+  const li=a.closest('li.br');if(li&&li.classList.contains('shut')){setShut(li,false);saveTree()}
+  document.body.classList.remove('tree-open');
+  if(x===cur.t&&y===cur.s&&!q.value){z?focusUnit(z):window.scrollTo(0,0);treeSync(x,y,z)}else{clearQ();go(x,y,z)}});
+document.querySelector('.tree-tools').addEventListener('click',e=>{const m=e.target.dataset.x;if(!m)return;
+  treeEl.querySelectorAll('li.br').forEach(li=>setShut(li,m==='none'||(m==='subs'&&li.classList.contains('l2'))));saveTree()});
+function treeSync(t,s,uid){treeEl.querySelectorAll('.cur,.active').forEach(e=>e.classList.remove('cur','active'));
+  const sn=treeEl.querySelector('li[data-node="s:'+t+'/'+s+'"]');if(!sn)return;sn.classList.add('cur');
+  [sn,sn.parentNode.closest('li.br')].forEach(li=>{if(li&&li.classList.contains('shut'))setShut(li,false)});
+  let el=sn.querySelector(':scope>.row');if(uid){const lf=sn.querySelector('li.leaf[data-u="'+uid+'"]');if(lf){lf.classList.add('active');el=lf}}
+  const tr=document.getElementById('tree');const r=el.getBoundingClientRect(),R=tr.getBoundingClientRect();
+  if(r.top<R.top+50||r.bottom>R.bottom-20)tr.scrollTop+=r.top-R.top-R.height/3}
+function treeLeaf(uid){const sn=treeEl.querySelector('li.cur');if(!sn)return;sn.querySelectorAll('li.leaf.active').forEach(e=>e.classList.remove('active'));
+  const lf=sn.querySelector('li.leaf[data-u="'+uid+'"]');if(lf)lf.classList.add('active')}
+document.getElementById('menu').onclick=()=>{if(matchMedia('(max-width:900px)').matches)document.body.classList.toggle('tree-open');
+  else{const h=document.body.classList.toggle('tree-hidden');store('cso-tree-hidden',h?'1':'0')}};
+document.getElementById('tclose').onclick=document.getElementById('scrim').onclick=()=>document.body.classList.remove('tree-open');
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.body.classList.remove('tree-open')});
+if(load('cso-tree-hidden')==='1')document.body.classList.add('tree-hidden');
 function focusUnit(uid){const d=main.querySelector('details.unit[data-id="'+uid+'"]');if(!d)return;d._fill();d.open=true;
   requestAnimationFrame(()=>{const off=document.querySelector('header.top').offsetHeight+document.getElementById('subsbar').offsetHeight+10;window.scrollTo(0,d.getBoundingClientRect().top+scrollY-off);d.classList.add('flash');setTimeout(()=>d.classList.remove('flash'),1800)})}
 function notesEl(t,s){
@@ -254,8 +344,10 @@ function notesEl(t,s){
   const fit=()=>{ta.style.height='auto';ta.style.height=Math.max(52,ta.scrollHeight+3)+'px'};requestAnimationFrame(fit);
   let tm;ta.addEventListener('input',()=>{fit();st.textContent='Saving…';clearTimeout(tm);tm=setTimeout(()=>{
     let ok=true;try{ta.value?localStorage.setItem(k,ta.value):localStorage.removeItem(k)}catch(e){ok=false}
-    st.textContent=ok?'Saved on this device':'Could not save: this browser is blocking storage'},400)});
+    st.textContent=ok?'Saved on this device':'Could not save: this browser is blocking storage';noteMark(t.id+'/'+s.id,!!ta.value)},400)});
   w.querySelector('[data-a="exp"]').onclick=exportNotes;w.querySelector('[data-a="imp"]').onclick=importNotes;return w}
+function noteMark(k,on){const a=treeEl.querySelector('li[data-node="s:'+k+'"]>.row>a');if(!a)return;const m=a.querySelector('.nm');
+  if(on&&!m)a.insertAdjacentHTML('beforeend','<span class="nm" title="Has notes">✎</span>');if(!on&&m)m.remove()}
 function allNotes(){const o={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.indexOf('cso-note-')===0)o[k.slice(9)]=localStorage.getItem(k)}}catch(e){}return o}
 function exportNotes(){const o=allNotes();const keys=Object.keys(o);if(!keys.length){alert('No notes yet.');return}
   let txt='CSO 2522 Interview Guide: my notes\n\n';NAV.forEach(t=>t.subs.forEach(s=>{const v=o[t.id+'/'+s.id];if(v)txt+='## '+t.abbr+' '+s.n+' · '+t.label+' › '+s.label+'\n'+v+'\n\n'}));
@@ -267,7 +359,7 @@ function importNotes(){const f=document.createElement('input');f.type='file';f.a
   const cur0=allNotes();const clash=Object.keys(o).filter(k=>cur0[k]&&cur0[k]!==o[k]).length;
   if(clash&&!confirm(clash+' section'+(clash===1?' already has':'s already have')+' different notes. Replace them with the imported notes?'))return;
   try{Object.keys(o).forEach(k=>localStorage.setItem('cso-note-'+k,o[k]))}catch(e){alert('Could not save: this browser is blocking storage.');return}
-  go(cur.t,cur.s)};r.readAsText(f.files[0])};f.click()}
+  buildTree();go(cur.t,cur.s)};r.readAsText(f.files[0])};f.click()}
 function terms(x){return x.toLowerCase().split(/\s+/).filter(w=>w.length>1)}
 const plain={};D.units.forEach(u=>{const x=document.createElement('div');x.innerHTML=u.html;plain[u.id]=(u.num+' '+u.old+' '+u.title+' '+x.textContent).toLowerCase()});
 function search(x){
@@ -355,7 +447,7 @@ function initTTS(){
   return {start}}
 const root=document.documentElement;const th=load('cso-theme');if(th)root.setAttribute('data-theme',th);
 document.getElementById('theme').addEventListener('click',()=>{const dark=root.getAttribute('data-theme')?root.getAttribute('data-theme')==='dark':matchMedia('(prefers-color-scheme: dark)').matches;const n=dark?'light':'dark';root.setAttribute('data-theme',n);store('cso-theme',n)});
-setHdr();
+setHdr();buildTree();
 if('speechSynthesis' in window&&'SpeechSynthesisUtterance' in window)TTS=initTTS();
 const [h1,h2,h3]=location.hash.slice(1).split('/');const st=T[h1]?h1:(T[load('cso-tab')]?load('cso-tab'):'strat');go(st,T[h1]?h2:load('cso-sub-'+st),T[h1]?h3:null);
 })();
