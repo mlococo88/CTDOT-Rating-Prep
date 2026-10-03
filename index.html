@@ -182,6 +182,21 @@ ul.tree li.shut>ul{display:none}
 }
 @media (prefers-reduced-motion:reduce){aside#tree{transition:none}}
 @media print{aside#tree,.menubtn,.pager{display:none}.layout{display:block}}
+details.unit{container-type:inline-size}
+.inote{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--amber);border-radius:4px;padding:10px 12px;margin:4px 14px 16px}
+.inote label{display:flex;justify-content:space-between;gap:8px;font:600 15px var(--display);margin-bottom:6px}
+.inote label .for{font-weight:500;color:var(--muted);font-size:13px}
+.inote textarea{width:100%;min-height:96px;resize:vertical;font:15px/1.5 var(--body);color:var(--ink);background:var(--surface);border:1.5px solid var(--rule);border-radius:4px;padding:8px 10px;overflow:hidden}
+.inote textarea:focus{outline:3px solid var(--amber);outline-offset:1px;border-color:var(--amber)}
+.inote .saved{font:500 12px var(--display);color:var(--muted);min-height:1.2em;margin-top:4px}
+@container (min-width:820px){
+  .bodywrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,300px);gap:8px;align-items:start}
+  .bodywrap .inote{position:sticky;top:calc(var(--hdr,64px) + 12px);margin:14px 16px 16px 0}
+}
+.note-tools{display:flex;justify-content:flex-end;gap:14px;margin:4px 0 0;font:600 13px var(--display)}
+.note-tools button{background:none;border:0;color:var(--link);text-decoration:underline;cursor:pointer;padding:2px 0;font:inherit}
+.note-tools button:focus-visible{outline:3px solid var(--amber)}
+.tree li.leaf .nm{margin-left:4px}
 footer{max-width:1100px;margin:0 auto;padding:0 20px 40px;color:var(--muted);font:500 14px var(--display)}
 .themebtn{background:none;border:1.5px solid var(--sign-ink);color:var(--sign-ink);border-radius:6px;font:600 16px/1 var(--display);padding:6px 9px;cursor:pointer}
 @media (max-width:640px){
@@ -204,7 +219,7 @@ footer{max-width:1100px;margin:0 auto;padding:0 20px 40px;color:var(--muted);fon
   .body{padding:0 14px 14px}
 }
 @media (prefers-reduced-motion:reduce){summary .chev{transition:none}}
-@media print{header.top,.tools,.note-bar,#player,.hearbtn{display:none} details.unit{break-inside:avoid}}
+@media print{header.top,.tools,.note-bar,.note-tools,.inote .saved,#player,.hearbtn{display:none} details.unit{break-inside:avoid}}
 </style>
 </head>
 <body>
@@ -273,7 +288,7 @@ function unitEl(u,opts){
     if(TTS){const hb=document.createElement('button');hb.type='button';hb.className='hearbtn';hb.textContent='▶ Listen from here';
       hb.onclick=()=>{const inSub=cur.s&&T[cur.t].subs.find(x=>x.id===cur.s).units.indexOf(u.id)>-1&&!q.value;
         const [a,c]=inSub?[cur.t,cur.s]:u.home;TTS.start(a,c,T[a].subs.find(x=>x.id===c).units.indexOf(u.id))};b.appendChild(hb)}
-    b.insertAdjacentHTML('beforeend',u.html);d.appendChild(b);
+    b.insertAdjacentHTML('beforeend',u.html);const wrap=document.createElement('div');wrap.className='bodywrap';wrap.appendChild(b);wrap.appendChild(itemNotes(u));d.appendChild(wrap);
     const others=(where[u.id]||[]).filter(([a,b])=>!(a===cur.t&&b===cur.s));if(opts.home){const p=document.createElement('div');p.className='also';p.innerHTML='Home section: <a href="#'+u.home[0]+'/'+u.home[1]+'/'+u.id+'">'+esc(u.num+' · '+label(u.home[0],u.home[1]))+'</a>';d.appendChild(p)}
     if(others.length&&!opts.loc){const p=document.createElement('div');p.className='also';p.innerHTML='Also under: '+others.map(([a,b])=>'<a href="#'+a+'/'+b+'">'+esc(label(a,b))+'</a>').join(', ');d.appendChild(p)}
     if(opts.hl)highlight(b,opts.hl)};
@@ -289,10 +304,12 @@ function go(tid,sid,uid){
   const head=document.createElement('div');head.className='panel-head';
   head.innerHTML='<div><p class="crumb">'+t.abbr+' · '+esc(t.label)+'</p><h2>'+s.n+' · '+esc(s.label)+'</h2><p>'+esc(t.blurb)+'</p></div><div class="tools">'+(TTS?'<button id="listen" class="listen">▶ Listen</button>':'')+'<button id="xall">Expand all</button></div>';
   main.appendChild(head);
-  main.appendChild(notesEl(t,s));
+  if(load('cso-note-'+t.id+'/'+s.id))main.appendChild(notesEl(t,s));
   if(TTS)document.getElementById('listen').onclick=()=>TTS.start(t.id,s.id,0);
   const lg=document.createElement('div');lg.className='legend';
   lg.innerHTML='<span style="--c:var(--sign)">Talking points</span><span style="--c:#7C8A86">Q&amp;A</span><span style="--c:var(--rule)">Reference</span><span style="--c:var(--amber)">Verify flag</span>';main.appendChild(lg);
+  const nt=document.createElement('div');nt.className='note-tools';nt.innerHTML='<button type="button" data-a="exp">Export all notes</button><button type="button" data-a="imp">Import notes</button>';
+  nt.querySelector('[data-a="exp"]').onclick=exportNotes;nt.querySelector('[data-a="imp"]').onclick=importNotes;main.appendChild(nt);
   const list=s.units.map(id=>U[id]);const isHome=u=>u.home[0]===t.id&&u.home[1]===s.id;
   const mine=list.filter(isHome),elsewhere=list.filter(u=>!isHome(u));
   const group=(lab,L,o)=>{if(!L.length)return;const h=document.createElement('h3');h.className='group';h.textContent=lab+' ('+L.length+')';main.appendChild(h);L.forEach(u=>main.appendChild(unitEl(u,o(u))))};
@@ -305,13 +322,13 @@ function go(tid,sid,uid){
   main.insertAdjacentHTML('beforeend','<nav class="pager" aria-label="Sections">'+(k>0?pl(seq[k-1],'pv'):'')+(k<seq.length-1?pl(seq[k+1],'nx'):'')+'</nav>');
   window.scrollTo(0,0);treeSync(t.id,s.id,uid);if(uid)focusUnit(uid)}
 const treeEl=document.getElementById('treebody');let shut=new Set();try{shut=new Set(JSON.parse(load('cso-tree')||'[]'))}catch(e){}
-function buildTree(){const notes=allNotes();let h='';
+function buildTree(){let h='';
   const br=(id,l,a,kids)=>'<li class="br l'+l+(shut.has(id)?' shut':'')+'" data-node="'+id+'"><div class="row"><button class="tw" aria-expanded="'+!shut.has(id)+'" aria-label="Expand or collapse"></button>'+a+'</div><ul>'+kids+'</ul></li>';
   NAV.forEach(t=>{h+=br('t:'+t.id,1,'<a href="#'+t.id+'/'+t.subs[0].id+'">'+t.abbr+' · '+esc(t.label)+'</a>',t.subs.map(s=>br('s:'+t.id+'/'+s.id,2,
-    '<a href="#'+t.id+'/'+s.id+'"><span class="n">'+s.n+'</span>'+esc(s.label)+'<span class="ct">'+s.units.length+'</span>'+(notes[t.id+'/'+s.id]?'<span class="nm" title="Has notes">✎</span>':'')+'</a>',
+    '<a href="#'+t.id+'/'+s.id+'"><span class="n">'+s.n+'</span>'+esc(s.label)+'<span class="ct">'+s.units.length+'</span>'+'</a>',
     s.units.map(id=>{const u=U[id];const home=u.home[0]===t.id&&u.home[1]===s.id;
       return '<li class="leaf'+(home?'':' xl')+'" data-u="'+id+'"><a href="#'+t.id+'/'+s.id+'/'+id+'"'+(home?'':' title="Lives in '+esc(label(u.home[0],u.home[1]))+'"')+'><span class="n">'+(home?'':'↗ ')+u.num+'</span>'+esc(u.title)+'</a></li>'}).join(''))).join(''))});
-  treeEl.innerHTML='<ul class="tree">'+h+'</ul>'}
+  treeEl.innerHTML='<ul class="tree">'+h+'</ul>';refreshMarks()}
 function saveTree(){store('cso-tree',JSON.stringify([...shut]))}
 function setShut(li,on){li.classList.toggle('shut',on);li.querySelector(':scope>.row>.tw').setAttribute('aria-expanded',!on);on?shut.add(li.dataset.node):shut.delete(li.dataset.node)}
 treeEl.addEventListener('click',e=>{const tw=e.target.closest('.tw');if(tw){const li=tw.closest('li');setShut(li,!li.classList.contains('shut'));saveTree();return}
@@ -339,18 +356,30 @@ function focusUnit(uid){const d=main.querySelector('details.unit[data-id="'+uid+
   requestAnimationFrame(()=>{const off=document.querySelector('header.top').offsetHeight+document.getElementById('subsbar').offsetHeight+10;window.scrollTo(0,d.getBoundingClientRect().top+scrollY-off);d.classList.add('flash');setTimeout(()=>d.classList.remove('flash'),1800)})}
 function notesEl(t,s){
   const k='cso-note-'+t.id+'/'+s.id;const w=document.createElement('div');w.className='notes';
-  w.innerHTML='<label for="note">My notes</label><textarea id="note" rows="2" placeholder="Add your own notes for this section…"></textarea><div class="note-bar"><span class="saved" aria-live="polite"></span><button type="button" data-a="exp">Export all notes</button><button type="button" data-a="imp">Import notes</button></div>';
+  w.innerHTML='<label for="note">Section notes</label><textarea id="note" rows="2" placeholder="Notes for this whole section…"></textarea><div class="note-bar"><span class="saved" aria-live="polite"></span></div>';
   const ta=w.querySelector('textarea'),st=w.querySelector('.saved');ta.value=load(k)||'';
   const fit=()=>{ta.style.height='auto';ta.style.height=Math.max(52,ta.scrollHeight+3)+'px'};requestAnimationFrame(fit);
   let tm;ta.addEventListener('input',()=>{fit();st.textContent='Saving…';clearTimeout(tm);tm=setTimeout(()=>{
     let ok=true;try{ta.value?localStorage.setItem(k,ta.value):localStorage.removeItem(k)}catch(e){ok=false}
-    st.textContent=ok?'Saved on this device':'Could not save: this browser is blocking storage';noteMark(t.id+'/'+s.id,!!ta.value)},400)});
-  w.querySelector('[data-a="exp"]').onclick=exportNotes;w.querySelector('[data-a="imp"]').onclick=importNotes;return w}
-function noteMark(k,on){const a=treeEl.querySelector('li[data-node="s:'+k+'"]>.row>a');if(!a)return;const m=a.querySelector('.nm');
-  if(on&&!m)a.insertAdjacentHTML('beforeend','<span class="nm" title="Has notes">✎</span>');if(!on&&m)m.remove()}
+    st.textContent=ok?'Saved on this device':'Could not save: this browser is blocking storage';refreshMarks()},400)});return w}
+function itemNotes(u){
+  const k='cso-note-u:'+u.id;const w=document.createElement('aside');w.className='inote';
+  w.innerHTML='<label>My notes<span class="for">'+esc(u.num||'')+'</span></label><textarea rows="4" placeholder="Your notes for this item…"></textarea><div class="saved" aria-live="polite"></div>';
+  const ta=w.querySelector('textarea'),st=w.querySelector('.saved');ta.setAttribute('aria-label','My notes for '+(u.num||'')+' '+u.title);ta.value=load(k)||'';
+  const fit=()=>{ta.style.height='auto';ta.style.height=Math.max(96,ta.scrollHeight+3)+'px'};requestAnimationFrame(fit);
+  let tm;ta.addEventListener('input',()=>{fit();st.textContent='Saving…';clearTimeout(tm);tm=setTimeout(()=>{
+    let ok=true;try{ta.value?localStorage.setItem(k,ta.value):localStorage.removeItem(k)}catch(e){ok=false}
+    st.textContent=ok?'Saved on this device':'Could not save: this browser is blocking storage';refreshMarks()},400)});
+  return w}
+function refreshMarks(){const o=allNotes();
+  treeEl.querySelectorAll('li.br.l2').forEach(li=>{const k=li.dataset.node.slice(2);const s=T[k.split('/')[0]].subs.find(x=>x.id===k.split('/')[1]);
+    setMark(li.querySelector(':scope>.row>a'),!!o[k]||s.units.some(id=>o['u:'+id]))});
+  treeEl.querySelectorAll('li.leaf').forEach(li=>setMark(li.querySelector('a'),!!o['u:'+li.dataset.u]))}
+function setMark(a,on){const m=a.querySelector('.nm');if(on&&!m)a.insertAdjacentHTML('beforeend','<span class="nm" title="Has notes">✎</span>');if(!on&&m)m.remove()}
 function allNotes(){const o={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.indexOf('cso-note-')===0)o[k.slice(9)]=localStorage.getItem(k)}}catch(e){}return o}
 function exportNotes(){const o=allNotes();const keys=Object.keys(o);if(!keys.length){alert('No notes yet.');return}
-  let txt='CSO 2522 Interview Guide: my notes\n\n';NAV.forEach(t=>t.subs.forEach(s=>{const v=o[t.id+'/'+s.id];if(v)txt+='## '+t.abbr+' '+s.n+' · '+t.label+' › '+s.label+'\n'+v+'\n\n'}));
+  let txt='CSO 2522 Interview Guide: my notes\n\n';NAV.forEach(t=>t.subs.forEach(s=>{const v=o[t.id+'/'+s.id];if(v)txt+='## '+t.abbr+' '+s.n+' · '+t.label+' › '+s.label+'\n'+v+'\n\n';
+    s.units.forEach(id=>{const u=U[id];const w=o['u:'+id];if(w&&u.home[0]===t.id&&u.home[1]===s.id)txt+='## '+u.num+' · '+u.title+'\n'+w+'\n\n'})}));
   txt+='<!-- notes-data '+JSON.stringify(o)+' -->\n';
   saveFile('interview-guide-notes.txt',txt)}
 async function saveFile(name,txt){
@@ -363,7 +392,7 @@ function importNotes(){const f=document.createElement('input');f.type='file';f.a
   const m=/<!-- notes-data (.*) -->/.exec(r.result);if(!m){alert('That file is not a notes export from this guide.');return}
   let o;try{o=JSON.parse(m[1])}catch(e){alert('That notes file could not be read.');return}
   const cur0=allNotes();const clash=Object.keys(o).filter(k=>cur0[k]&&cur0[k]!==o[k]).length;
-  if(clash&&!confirm(clash+' section'+(clash===1?' already has':'s already have')+' different notes. Replace them with the imported notes?'))return;
+  if(clash&&!confirm(clash+' item'+(clash===1?' already has':'s already have')+' different notes. Replace them with the imported notes?'))return;
   try{Object.keys(o).forEach(k=>localStorage.setItem('cso-note-'+k,o[k]))}catch(e){alert('Could not save: this browser is blocking storage.');return}
   buildTree();go(cur.t,cur.s)};r.readAsText(f.files[0])};f.click()}
 function terms(x){return x.toLowerCase().split(/\s+/).filter(w=>w.length>1)}
@@ -371,7 +400,8 @@ const plain={};D.units.forEach(u=>{const x=document.createElement('div');x.inner
 function search(x){
   const ts=terms(x);if(!ts.length){go(cur.t,cur.s);return}
   [...tabsEl.children].forEach(b=>b.setAttribute('aria-selected','false'));document.getElementById('subsbar').style.display='none';
-  const hits=D.units.filter(u=>where[u.id]).map(u=>({u,score:ts.every(t=>plain[u.id].includes(t))?ts.reduce((a,t)=>a+(u.title.toLowerCase().includes(t)?5:0)+plain[u.id].split(t).length-1,0):0})).filter(h=>h.score>0).sort((a,b)=>b.score-a.score);
+  const N=allNotes();const txt=u=>plain[u.id]+' '+(N['u:'+u.id]||'').toLowerCase();
+  const hits=D.units.filter(u=>where[u.id]).map(u=>{const x=txt(u);return {u,score:ts.every(t=>x.includes(t))?ts.reduce((a,t)=>a+(u.title.toLowerCase().includes(t)?5:0)+x.split(t).length-1,0):0}}).filter(h=>h.score>0).sort((a,b)=>b.score-a.score);
   window.scrollTo(0,0);main.innerHTML='<div class="panel-head"><div><h2>Search</h2><p>'+hits.length+' section'+(hits.length===1?'':'s')+' match “'+esc(x)+'”.</p></div></div>';
   if(!hits.length){main.insertAdjacentHTML('beforeend','<p class="empty">Nothing matches. Try one distinctive word, like a project name, a code section, or a limit state.</p>');return}
   hits.slice(0,80).forEach((h,i)=>{const w=h.u.home;const d=unitEl(h.u,{loc:label(w[0],w[1]),hl:ts});main.appendChild(d);if(i<3){d._fill();d.open=true}highlight(d.querySelector('summary .t'),ts)})}
